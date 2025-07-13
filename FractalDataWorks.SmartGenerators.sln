@@ -1,0 +1,110 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C4B3D1E2-B179-40C7-8454-5548A057A65E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{AEB57FE1-F98D-4D58-98D7-E1EDD3387CB2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "analyzers", "analyzers", "{0010A95A-B21B-435E-BC82-17FF2338D19D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{1E666C7C-3F95-49B1-ABB7-AE037C6FC322}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{21953711-6B05-4635-8642-2A365CF0349C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CODEOWNERS = .github\CODEOWNERS
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{EB8E0F1A-171F-4BD1-8379-0708D6D364DC}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+		.github\workflows\codeql.yml = .github\workflows\codeql.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE = LICENSE
+		NuGet.Config = NuGet.Config
+		version.json = version.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalDataWorks.SmartGenerators", "src\FractalDataWorks.SmartGenerators\FractalDataWorks.SmartGenerators.csproj", "{612E597F-04B2-E953-16E3-28D6FD787A55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalDataWorks.SmartGenerators.CodeBuilders", "src\FractalDataWorks.SmartGenerators.CodeBuilders\FractalDataWorks.SmartGenerators.CodeBuilders.csproj", "{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalDataWorks.SmartGenerators.TestUtilities", "src\FractalDataWorks.SmartGenerators.TestUtilities\FractalDataWorks.SmartGenerators.TestUtilities.csproj", "{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalDataWorks.SmartGenerators.CodeBuilder.Tests", "tests\FractalDataWorks.SmartGenerators.CodeBuilder.Tests\FractalDataWorks.SmartGenerators.CodeBuilder.Tests.csproj", "{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalDataWorks.SmartGenerators.Tests", "tests\FractalDataWorks.SmartGenerators.Tests\FractalDataWorks.SmartGenerators.Tests.csproj", "{8E70F776-CE47-7D5D-4577-F356CCF177CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FractalDataWorks.SmartGenerators.TestUtilities.Tests", "tests\FractalDataWorks.SmartGenerators.TestUtilities.Tests\FractalDataWorks.SmartGenerators.TestUtilities.Tests.csproj", "{2DD3D27A-3347-D50E-6F08-934916B09092}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Develop|Any CPU = Develop|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{612E597F-04B2-E953-16E3-28D6FD787A55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{612E597F-04B2-E953-16E3-28D6FD787A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{612E597F-04B2-E953-16E3-28D6FD787A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{612E597F-04B2-E953-16E3-28D6FD787A55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{612E597F-04B2-E953-16E3-28D6FD787A55}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{612E597F-04B2-E953-16E3-28D6FD787A55}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD}.Develop|Any CPU.Build.0 = Debug|Any CPU
+		{2DD3D27A-3347-D50E-6F08-934916B09092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD3D27A-3347-D50E-6F08-934916B09092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DD3D27A-3347-D50E-6F08-934916B09092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DD3D27A-3347-D50E-6F08-934916B09092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DD3D27A-3347-D50E-6F08-934916B09092}.Develop|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DD3D27A-3347-D50E-6F08-934916B09092}.Develop|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EB8E0F1A-171F-4BD1-8379-0708D6D364DC} = {21953711-6B05-4635-8642-2A365CF0349C}
+		{612E597F-04B2-E953-16E3-28D6FD787A55} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{563B1C9D-FD7E-B639-7194-1061BA9F7DFF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{BFA286C6-22E9-DD6B-5FB0-946F3DC61CA8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{418C271F-3AED-0610-0E2B-7F0BAB1C9D54} = {C4B3D1E2-B179-40C7-8454-5548A057A65E}
+		{8E70F776-CE47-7D5D-4577-F356CCF177CD} = {C4B3D1E2-B179-40C7-8454-5548A057A65E}
+		{2DD3D27A-3347-D50E-6F08-934916B09092} = {C4B3D1E2-B179-40C7-8454-5548A057A65E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC731AEF-23F4-4928-BB4F-B5F89D6C2727}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,326 @@
+# ===============================================
+# Visual Studio and .NET
+# ===============================================
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options directory
+.vs/
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
+
+# Visual Studio auto generated files
+Generated\ Files/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NUnit
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+# Build Results of an ATL Project
+[Dd]ebugPS/
+[Rr]eleasePS/
+dlldata.c
+
+# Benchmark Results
+BenchmarkDotNet.Artifacts/
+
+# .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ===============================================
+# Package Management
+# ===============================================
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/[Pp]ackages/repositories.config
+# NuGet v3's project.json files produces more ignorable files
+*.nuget.props
+*.nuget.targets
+
+# Package lock files
+packages.lock.json
+
+# ===============================================
+# Development Tools
+# ===============================================
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# TeamCity
+_TeamCity*
+
+# DotCover code coverage tool
+*.dotCover
+
+# AxoCover code coverage tool
+.axoCover/*
+!.axoCover/settings.json
+
+# Coverlet code coverage results
+coverage*.json
+coverage*.xml
+coverage*.info
+lcov.info
+
+# ===============================================
+# Build and Publish
+# ===============================================
+
+# MSBuild Binary and Structured Log
+*.binlog
+
+# Publish profiles
+*.pubxml
+*.publishproj
+PublishScripts/
+
+# Publish output
+*.azurePubxml
+# Note: Comment the next line if you want to checkin your web deploy settings,
+# but database connection strings (with potential passwords) will be unencrypted
+*.pubxml.user
+
+# Publishing directory
+publish/
+
+# Windows Azure Build Output
+csx/
+*.build.csdef
+
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
+*.rptproj.rsuser
+*- [Bb]ackup.rdl
+*- [Bb]ackup ([0-9]).rdl
+*- [Bb]ackup ([0-9][0-9]).rdl
+
+# ===============================================
+# Development Environment
+# ===============================================
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===============================================
+# Application specific
+# ===============================================
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# StyleCop
+StyleCopReport.xml
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Visual Studio Trace Files
+*.e2e
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# ===============================================
+# Database
+# ===============================================
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# ===============================================
+# Security - NEVER commit these!
+# ===============================================
+
+# Local settings (may contain secrets)
+appsettings.local.json
+appsettings.*.local.json
+secrets.json
+*.pfx
+*.p12
+*.key
+*.pem
+
+# Connection strings
+connectionstrings.config
+connectionstrings.json
+
+# ===============================================
+# Source Generators and Analyzers
+# ===============================================
+
+# Generated code
+*.Generated.cs
+*.g.cs
+*.g.i.cs
+
+# Analyzer work directories
+.analyzers/
+.generators/
+
+# ===============================================
+# Documentation
+# ===============================================
+
+# DocFX
+_site/
+api/
+articles/*.md
+
+# Sandcastle Help File Builder
+*.shfbproj.user
+Help/
+
+# ===============================================
+# Temporary files
+# ===============================================
+
+# Temporary
+*.tmp
+*.temp
+*.cache
+*.bak
+*.swp
+*~.nib
+
+# ===============================================
+# Custom project ignores
+# ===============================================
+
+# Local development configuration
+*.local.*
+!*.local.example.*
+
+# Performance test results
+[Pp]erf[Rr]esults/
+
+# Integration test outputs
+[Ii]ntegration[Tt]est[Oo]utput/
+
+# Load test results
+[Ll]oad[Tt]est[Rr]esult*/
+
+# GitVersion
+GitVersion.yml.bak
