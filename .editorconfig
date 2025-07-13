@@ -1,0 +1,179 @@
+# ===============================================
+# CRITICAL RULES - BLOCK DEVELOPMENT (Real bugs/security)
+# ===============================================
+
+# Security - These are actual vulnerabilities
+dotnet_diagnostic.CA3001.severity = error  # SQL injection
+dotnet_diagnostic.CA3003.severity = error  # File path injection
+dotnet_diagnostic.CA3006.severity = error  # Process command injection
+dotnet_diagnostic.CA3075.severity = error  # XML DTD processing
+dotnet_diagnostic.CA5362.severity = error  # Certificate validation bypass
+dotnet_diagnostic.CA5394.severity = error  # Insecure randomness
+dotnet_diagnostic.SCS0002.severity = error  # SQL injection
+dotnet_diagnostic.SCS0007.severity = error  # XSS
+dotnet_diagnostic.SCS0028.severity = error  # Unsafe deserialization
+dotnet_diagnostic.SCS0029.severity = error  # Hardcoded passwords
+
+# Memory Leaks - These cause production issues
+dotnet_diagnostic.CA1001.severity = error  # Types owning disposables must be disposable
+dotnet_diagnostic.CA2000.severity = warning # Dispose objects before scope loss
+dotnet_diagnostic.CA2213.severity = error  # Disposable fields must be disposed
+dotnet_diagnostic.IDISP001.severity = warning # Dispose created
+dotnet_diagnostic.IDISP003.severity = error  # Dispose previous before reassigning
+dotnet_diagnostic.IDISP004.severity = error  # Don't ignore IDisposable returns
+dotnet_diagnostic.IDISP005.severity = error  # Return value disposal tracking
+dotnet_diagnostic.IDISP007.severity = error  # Don't dispose injected
+
+# Async/Threading - These cause deadlocks/crashes
+dotnet_diagnostic.VSTHRD100.severity = error  # Async void methods
+dotnet_diagnostic.VSTHRD110.severity = error  # Observe async results
+dotnet_diagnostic.VSTHRD002.severity = error  # Avoid .Result and .Wait()
+dotnet_diagnostic.AsyncFixer03.severity = error # Fire-and-forget async
+
+# Reliability - These cause runtime failures
+dotnet_diagnostic.CA2201.severity = error  # Don't raise reserved exceptions
+dotnet_diagnostic.CA2219.severity = error  # Don't raise exceptions in finally
+dotnet_diagnostic.CA2241.severity = error  # String format mismatches
+
+# ===============================================
+# PERFORMANCE RULES - AUTO-FIXABLE (Won't block dev)
+# ===============================================
+
+# All these have automatic fixes and improve performance
+dotnet_diagnostic.CA1822.severity = suggestion  # Mark members as static
+dotnet_diagnostic.CA1827.severity = suggestion  # Use Any() instead of Count() > 0
+dotnet_diagnostic.CA1829.severity = suggestion  # Use Length/Count property
+dotnet_diagnostic.CA1834.severity = suggestion  # Use StringBuilder.Append(char)
+dotnet_diagnostic.CA1835.severity = suggestion  # Use Memory/Span overloads
+dotnet_diagnostic.CA1841.severity = suggestion  # Prefer Dictionary.Contains
+dotnet_diagnostic.CA1845.severity = suggestion  # Use span-based string.Concat
+dotnet_diagnostic.CA1846.severity = suggestion  # Prefer AsSpan over Substring
+dotnet_diagnostic.CA1847.severity = suggestion  # Use char literal for single char
+dotnet_diagnostic.CA2016.severity = warning      # Forward CancellationToken
+
+# Meziantou Performance - All auto-fixable
+dotnet_diagnostic.MA0029.severity = suggestion  # Combine LINQ methods
+dotnet_diagnostic.MA0063.severity = suggestion  # Optimize Enumerable.Count() usage
+dotnet_diagnostic.MA0066.severity = suggestion  # Use Equals over CompareTo == 0
+dotnet_diagnostic.MA0067.severity = suggestion  # Use Guid.Empty
+dotnet_diagnostic.MA0089.severity = suggestion  # Use Memory optimizations
+dotnet_diagnostic.MA0110.severity = suggestion  # Use regex source generator
+dotnet_diagnostic.MA0098.severity = suggestion  # Use IEnumerable.Any() instead of Count()
+
+# AsyncFixer - Auto-fixable performance
+dotnet_diagnostic.AsyncFixer01.severity = suggestion  # Unnecessary async/await
+dotnet_diagnostic.AsyncFixer04.severity = suggestion  # ConfigureAwait(false)
+dotnet_diagnostic.AsyncFixer05.severity = suggestion  # Downcasting Task<T> to Task
+
+# ===============================================
+# FORMATTING - ONLY IN CI/CD (Never block local dev)
+# ===============================================
+
+# StyleCop - All auto-fixable formatting
+dotnet_diagnostic.SA1000.severity = none  # Keywords should be spaced correctly
+dotnet_diagnostic.SA1005.severity = none  # Single line comment spacing
+dotnet_diagnostic.SA1010.severity = none  # Opening square brackets should not be preceded by a space
+dotnet_diagnostic.SA1025.severity = none  # Multiple whitespace
+dotnet_diagnostic.SA1027.severity = none  # Tabs and spaces should be used correctly
+dotnet_diagnostic.SA1028.severity = none  # No trailing whitespace
+dotnet_diagnostic.SA1121.severity = none  # Use built-in type alias
+dotnet_diagnostic.SA1122.severity = none  # Use string.Empty
+dotnet_diagnostic.SA1137.severity = none  # Same indentation
+dotnet_diagnostic.SA1204.severity = none  # Static members should appear before non-static members
+dotnet_diagnostic.SA1210.severity = none  # Using directives ordering
+dotnet_diagnostic.SA1214.severity = none  # Readonly fields should appear before non-readonly fields
+dotnet_diagnostic.SA1413.severity = none  # Trailing comma
+dotnet_diagnostic.SA1503.severity = none  # Braces should not be omitted
+dotnet_diagnostic.SA1508.severity = none  # Closing brace should not be preceded by a blank line
+dotnet_diagnostic.SA1516.severity = none  # Elements separated by blank line
+
+# ===============================================
+# PERMANENTLY DISABLED (Noise/False positives)
+# ===============================================
+
+# Too pedantic or situational
+dotnet_diagnostic.CA1062.severity = none  # Validate arguments (null checks everywhere)
+dotnet_diagnostic.CA1303.severity = none  # Localization
+dotnet_diagnostic.CA1031.severity = none  # Catch specific exceptions
+dotnet_diagnostic.CA1014.severity = none  # CLSCompliant
+dotnet_diagnostic.CA2007.severity = none  # ConfigureAwait (covered by AsyncFixer)
+dotnet_diagnostic.SA1600.severity = none  # Documentation
+dotnet_diagnostic.SA1633.severity = none  # File headers
+dotnet_diagnostic.SA1402.severity = none  # Single type per file
+dotnet_diagnostic.SA1101.severity = none  # Prefix this
+dotnet_diagnostic.SA1309.severity = none  # Field underscore
+dotnet_diagnostic.SA1200.severity = none  # Using directives placement
+dotnet_diagnostic.MA0002.severity = warning  # Use IEqualityComparer or IComparer (perf issue)
+dotnet_diagnostic.MA0004.severity = none  # Use AsyncFixer04 instead
+dotnet_diagnostic.MA0006.severity = suggestion  # Use string.Equals (correctness)
+dotnet_diagnostic.MA0009.severity = warning  # Regex DoS (real security issue)
+dotnet_diagnostic.MA0016.severity = suggestion  # Prefer abstraction over implementation
+dotnet_diagnostic.MA0048.severity = suggestion  # File name must match type name
+dotnet_diagnostic.MA0051.severity = suggestion  # Method is too long
+dotnet_diagnostic.VSTHRD200.severity = warning  # Async suffix - confusing API
+
+# ===============================================
+# MODERN ANALYZER RECOMMENDATIONS
+# ===============================================
+
+# Consider adding these modern analyzers:
+# - Microsoft.CodeAnalysis.NetAnalyzers (included in .NET SDK)
+# - Roslynator.Analyzers (excellent refactoring, not pedantic)
+# - Microsoft.VisualStudio.Threading.Analyzers (you have this)
+# - NetFabric.Hyperlinq.Analyzer (LINQ performance)
+# - SmartAnalyzers.CSharpExtensions.Annotations (null safety)
+
+# ===============================================
+# CI/CD ESCALATION (add to your pipeline)
+# ===============================================
+# In your azure-pipelines.yml:
+# - script: |
+#     dotnet format --verify-no-changes --severity info
+#   displayName: 'Verify formatting'
+#   condition: eq(variables['Build.Reason'], 'PullRequest')
+#
+# - script: |
+#     dotnet build -p:EnforceCodeStyleInBuild=true -p:TreatWarningsAsErrors=true
+#   displayName: 'Build with strict analysis'
+#   condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+
+# ===============================================
+# IDE EXPERIENCE SETTINGS
+# ===============================================
+
+# Modern C# preferences (all have fixes)
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_style_prefer_pattern_matching = true:suggestion
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+csharp_prefer_simple_using_statement = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
+csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+csharp_style_prefer_tuple_swap = true:suggestion
+csharp_style_prefer_utf8_string_literals = true:suggestion
+
+# Init-only preferences
+csharp_style_prefer_readonly_struct = true:suggestion
+csharp_style_prefer_readonly_struct_member = true:suggestion
+
+# File scoped namespaces (modern C#)
+csharp_style_namespace_declarations = file_scoped:suggestion
+
+# Primary constructors (C# 12)
+csharp_style_prefer_primary_constructors = true:suggestion
+
+# ===============================================
+# NAMING CONVENTIONS (non-blocking)
+# ===============================================
+
+# Define naming rules but keep them as suggestions
+dotnet_naming_rule.async_methods_should_have_suffix.severity = suggestion
+dotnet_naming_rule.async_methods_should_have_suffix.symbols = async_methods
+dotnet_naming_rule.async_methods_should_have_suffix.style = async_suffix
+
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.applicable_accessibilities = *
+dotnet_naming_symbols.async_methods.required_modifiers = async
+
+dotnet_naming_style.async_suffix.required_suffix = Async
+dotnet_naming_style.async_suffix.capitalization = pascal_case

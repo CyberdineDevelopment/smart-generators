@@ -1,0 +1,44 @@
+version: 2
+updates:
+  # .NET dependencies
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "FractalDataWorks Development Team"
+    labels:
+      - "dependencies"
+      - "automated"
+    groups:
+      microsoft-dependencies:
+        patterns:
+          - "Microsoft.*"
+          - "System.*"
+        update-types:
+          - "minor"
+          - "patch"
+      analyzers:
+        patterns:
+          - "*Analyzer*"
+          - "AsyncFixer"
+          - "Meziantou.Analyzer"
+          - "Roslynator.*"
+    ignore:
+      # Add any packages you want to manually control
+      # - dependency-name: "Example.Package"
+      #   versions: ["1.x", "2.x"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+    labels:
+      - "github-actions"
+      - "automated"
