@@ -94,16 +94,13 @@ var classBuilder = new ClassBuilder("PersonDto")
     .MakePartial()
     .WithSummary("Data transfer object for Person entity")
     .AddProperty("Id", "int", property => property
-        .WithSummary("Gets or sets the unique identifier")
-        .WithGetter()
-        .WithSetter())
+        .WithXmlDocSummary("Gets or sets the unique identifier"))
     .AddProperty("Name", "string", property => property
-        .WithSummary("Gets or sets the person's name")
-        .WithGetter()
+        .WithXmlDocSummary("Gets or sets the person's name")
         .WithInitSetter())
     .AddMethod("ToString", "string", method => method
         .MakePublic()
-        .WithOverride()
+        .MakeOverride()
         .WithBody("return $\"Person {{ Id = {Id}, Name = {Name} }}\";"));
 
 var namespaceBuilder = new NamespaceBuilder("MyApp.Models")
@@ -125,8 +122,7 @@ var interfaceBuilder = new InterfaceBuilder("IRepository")
         .AddParameter("id", "int"))
     .AddMethod("Save", "void", method => method
         .AddParameter("entity", "T"))
-    .AddProperty("Count", "int", property => property
-        .WithGetter());
+    .AddProperty("Count", "int");
 ```
 
 ### Building an Enum
@@ -219,7 +215,7 @@ protected override MyInputInfo? TransformSyntax(GeneratorSyntaxContext context)
     
     if (scanner != null)
     {
-        var allTypes = scanner.GetAllNamedTypes();
+        var allTypes = scanner.AllNamedTypes;
         // Process types across assemblies
     }
     
@@ -231,25 +227,22 @@ protected override MyInputInfo? TransformSyntax(GeneratorSyntaxContext context)
 
 ```csharp
 var method = new MethodBuilder("Calculate", "double")
-    .WithSummary("Calculates the result based on input parameters")
-    .WithParameter("value", "double", param => param
-        .WithDescription("The input value"))
-    .WithParameter("factor", "double", param => param
-        .WithDescription("The multiplication factor"))
-    .WithReturns("The calculated result")
-    .WithException("ArgumentException", "Thrown when factor is zero");
+    .WithXmlDocSummary("Calculates the result based on input parameters")
+    .AddParameter("double", "value")
+    .AddParameter("double", "factor")
+    .WithXmlDocParam("value", "The input value")
+    .WithXmlDocParam("factor", "The multiplication factor")
+    .WithXmlDocReturns("The calculated result")
+    .WithXmlDocException("ArgumentException", "Thrown when factor is zero");
 ```
 
 ### Custom Code Blocks
 
 ```csharp
-var customCode = new CodeBlockBuilder()
-    .AddLine("#if DEBUG")
-    .AddLine("Console.WriteLine(\"Debug mode\");")
-    .AddLine("#endif")
-    .Build();
-
-classBuilder.AddMember(customCode);
+classBuilder.AddCodeBlock(@"
+    #if DEBUG
+    Console.WriteLine(""Debug mode"");
+    #endif");
 ```
 
 ## Naming Conventions

@@ -93,8 +93,10 @@ public class FieldExpectations
     /// <exception cref="ShouldAssertException">Thrown if the field type does not match.</exception>
     public FieldExpectations HasType(string typeName)
     {
-        var fieldType = _fieldDeclaration.Declaration.Type.ToString();
-        fieldType.ShouldBe(typeName, $"Expected field '{_variable.Identifier}' to have type '{typeName}' but was '{fieldType}'");
+        if (!TypeComparer.AreEquivalent(_fieldDeclaration.Declaration.Type, typeName))
+        {
+            throw new ShouldAssertException($"Expected field '{_variable.Identifier}' to have type '{typeName}' but was '{_fieldDeclaration.Declaration.Type}'");
+        }
         return this;
     }
 

@@ -108,16 +108,13 @@ var classBuilder = new ClassBuilder("PersonDto")
     .MakePartial()
     .WithSummary("Data transfer object for Person entity")
     .AddProperty("Id", "int", property => property
-        .WithSummary("Gets or sets the unique identifier")
-        .WithGetter()
-        .WithSetter())
+        .WithXmlDocSummary("Gets or sets the unique identifier"))
     .AddProperty("Name", "string", property => property
-        .WithSummary("Gets or sets the person's name")
-        .WithGetter()
+        .WithXmlDocSummary("Gets or sets the person's name")
         .WithInitSetter())
     .AddMethod("ToString", "string", method => method
         .MakePublic()
-        .WithOverride()
+        .MakeOverride()
         .WithBody("return $\"Person {{ Id = {Id}, Name = {Name} }}\";"));
 
 var code = new NamespaceBuilder("MyApp.Models")
@@ -147,14 +144,18 @@ public class MyGeneratorTests
             }";
 
         // Act
-        var result = SourceGeneratorTestHelper.RunGenerator<MyGenerator>(source);
+        var generator = new MyGenerator();
+        var output = SourceGeneratorTestHelper.RunGenerator(
+            generator,
+            new[] { source },
+            out var diagnostics);
 
         // Assert
-        result.Diagnostics.ShouldBeEmpty();
-        result.GeneratedSources.Length.ShouldBe(1);
+        diagnostics.ShouldBeEmpty();
+        output.Count.ShouldBe(1);
         
         // Use expectations API for structural assertions
-        ExpectationsFactory.ExpectCode(result.GeneratedSources[0])
+        ExpectationsFactory.ExpectCode(output.Values.First())
             .HasNamespace("MyApp.Models")
             .HasClass("PersonDto", c => c
                 .HasModifier("public")
@@ -181,7 +182,7 @@ Then use it in your generator:
 var scanner = AssemblyScannerService.Get(compilation);
 if (scanner != null)
 {
-    var allTypes = scanner.GetAllNamedTypes();
+    var allTypes = scanner.AllNamedTypes;
     // Process types across the compilation
 }
 ```

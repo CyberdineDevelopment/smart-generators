@@ -35,7 +35,10 @@ public class PropertyExpectations
     public PropertyExpectations HasType(string typeName)
     {
         // Verify the property has the expected type
-        _propertyDeclaration.Type.ToString().ShouldBe(typeName, options: StringCompareShould.IgnoreCase, customMessage: $"Property '{_propertyDeclaration.Identifier.Text}' has type '{_propertyDeclaration.Type}', but expected '{typeName}'.");
+        if (!TypeComparer.AreEquivalent(_propertyDeclaration.Type, typeName))
+        {
+            throw new ShouldAssertException($"Property '{_propertyDeclaration.Identifier.Text}' has type '{_propertyDeclaration.Type}', but expected '{typeName}'.");
+        }
 
         return this;
     }

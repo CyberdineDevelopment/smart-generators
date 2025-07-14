@@ -35,7 +35,7 @@ public class ParameterExpectations
         {
             _errors.Add($"Parameter '{_parameterSyntax.Identifier.Text}' has no type specified");
         }
-        else if (!string.Equals(_parameterSyntax.Type.ToString(), typeName, StringComparison.Ordinal))
+        else if (!TypeComparer.AreEquivalent(_parameterSyntax.Type, typeName))
         {
             _errors.Add($"Expected parameter '{_parameterSyntax.Identifier.Text}' to have type '{typeName}' but found '{_parameterSyntax.Type}'");
         }

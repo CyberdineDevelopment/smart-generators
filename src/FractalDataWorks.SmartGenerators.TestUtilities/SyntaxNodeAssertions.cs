@@ -120,9 +120,11 @@ public static class SyntaxNodeAssertions
     /// <returns>The method declaration for chaining.</returns>
     public static MethodDeclarationSyntax ShouldReturnType(this MethodDeclarationSyntax methodDeclaration, string typeName)
     {
-        methodDeclaration.ReturnType.ToString().ShouldBe(
-            typeName,
-            $"Method {methodDeclaration.Identifier.ValueText} should return {typeName} but returns {methodDeclaration.ReturnType}.");
+        if (!TypeComparer.AreEquivalent(methodDeclaration.ReturnType, typeName))
+        {
+            throw new ShouldAssertException(
+                $"Method {methodDeclaration.Identifier.ValueText} should return {typeName} but returns {methodDeclaration.ReturnType}.");
+        }
 
         return methodDeclaration;
     }
@@ -135,8 +137,17 @@ public static class SyntaxNodeAssertions
     /// <returns>The parameter syntax for chaining.</returns>
     public static ParameterSyntax ShouldHaveType(this ParameterSyntax parameter, string typeName)
     {
-        var actualTypeName = parameter.Type?.ToString();
-        actualTypeName.ShouldBe(typeName, $"Parameter '{parameter.Identifier.ValueText}' has type '{actualTypeName}', but expected '{typeName}'.");
+        if (parameter.Type == null)
+        {
+            throw new ShouldAssertException($"Parameter '{parameter.Identifier.ValueText}' has no type specified.");
+        }
+        
+        if (!TypeComparer.AreEquivalent(parameter.Type, typeName))
+        {
+            throw new ShouldAssertException(
+                $"Parameter '{parameter.Identifier.ValueText}' has type '{parameter.Type}', but expected '{typeName}'.");
+        }
+        
         return parameter;
     }
 }

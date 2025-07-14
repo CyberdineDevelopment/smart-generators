@@ -49,22 +49,20 @@ var classBuilder = new ClassBuilder("Customer")
 ```csharp
 classBuilder.AddProperty("Id", "int", property => property
     .MakePublic()
-    .WithGetter()
-    .WithSetter()
-    .WithSummary("Gets or sets the customer ID")
+    .WithXmlDocSummary("Gets or sets the customer ID")
     .AddAttribute("Key")
     .AddAttribute("DatabaseGenerated", attr => attr
         .AddArgument("DatabaseGeneratedOption.Identity")));
 
 // Auto-implemented property with init setter
 classBuilder.AddProperty("CreatedDate", "DateTime", property => property
-    .WithGetter()
     .WithInitSetter()
-    .WithDefaultValue("DateTime.UtcNow"));
+    .WithInitializer("DateTime.UtcNow"));
 
-// Property with backing field
+// Property with custom getter/setter
+classBuilder.AddField("string", "_name")
+    .MakePrivate();
 classBuilder.AddProperty("Name", "string", property => property
-    .WithBackingField("_name")
     .WithGetter("return _name;")
     .WithSetter("_name = value?.Trim() ?? string.Empty;"));
 ```
@@ -75,13 +73,12 @@ classBuilder.AddProperty("Name", "string", property => property
 classBuilder.AddMethod("CalculateDiscount", "decimal", method => method
     .MakePublic()
     .MakeVirtual()
-    .WithSummary("Calculates the discount for the customer")
-    .AddParameter("orderTotal", "decimal", param => param
-        .WithDescription("The total order amount"))
-    .AddParameter("promoCode", "string?", param => param
-        .WithDefaultValue("null")
-        .WithDescription("Optional promotional code"))
-    .WithReturns("The calculated discount amount")
+    .WithXmlDocSummary("Calculates the discount for the customer")
+    .AddParameter("decimal", "orderTotal")
+    .AddParameter("string?", "promoCode", "null")
+    .WithXmlDocParam("orderTotal", "The total order amount")
+    .WithXmlDocParam("promoCode", "Optional promotional code")
+    .WithXmlDocReturns("The calculated discount amount")
     .WithBody(@"
         if (promoCode == ""SAVE10"")
             return orderTotal * 0.1m;
@@ -108,8 +105,7 @@ var interfaceBuilder = new InterfaceBuilder("IRepository")
         .AddParameter("id", "TKey"))
     .AddMethod("Add", "Task", method => method
         .AddParameter("entity", "TEntity"))
-    .AddProperty("Count", "int", property => property
-        .WithGetter());
+    .AddProperty("Count", "int");
 ```
 
 ### RecordBuilder
@@ -156,8 +152,8 @@ public string GenerateBuilder(string className, List<PropertyInfo> properties)
     // Add private fields
     foreach (var prop in properties)
     {
-        builderClass.AddField($"_{prop.Name.ToLower()}", prop.Type, field => field
-            .MakePrivate());
+        builderClass.AddField(prop.Type, $"_{prop.Name.ToLower()}")
+            .MakePrivate();
     }
     
     // Add builder methods
@@ -200,9 +196,7 @@ public string GenerateDto(INamedTypeSymbol entityType)
         {
             dtoClass.AddProperty(property.Name, property.Type.ToDisplayString(), 
                 prop => prop
-                    .WithGetter()
-                    .WithSetter()
-                    .WithSummary($"Gets or sets {property.Name}"));
+                    .WithXmlDocSummary($"Gets or sets {property.Name}"));
         }
     }
     
@@ -297,21 +291,14 @@ propertyBuilder.AddAttribute(attribute);
 
 ```csharp
 methodBuilder
-    .WithSummary("Processes the order and returns the result")
-    .WithRemarks("This method performs validation before processing")
-    .AddParameter("order", "Order", param => param
-        .WithDescription("The order to process"))
-    .AddParameter("options", "ProcessOptions", param => param
-        .WithDescription("Processing options"))
-    .WithReturns("The processing result")
-    .WithException("ArgumentNullException", "Thrown when order is null")
-    .WithException("InvalidOperationException", "Thrown when order is invalid")
-    .WithExample(@"
-        var result = processor.ProcessOrder(order, new ProcessOptions 
-        { 
-            ValidateInventory = true 
-        });
-    ");
+    .WithXmlDocSummary("Processes the order and returns the result")
+    .AddParameter("Order", "order")
+    .AddParameter("ProcessOptions", "options")
+    .WithXmlDocParam("order", "The order to process")
+    .WithXmlDocParam("options", "Processing options")
+    .WithXmlDocReturns("The processing result")
+    .WithXmlDocException("ArgumentNullException", "Thrown when order is null")
+    .WithXmlDocException("InvalidOperationException", "Thrown when order is invalid");
 ```
 
 ## Advanced Usage
@@ -319,29 +306,23 @@ methodBuilder
 ### Custom Code Blocks
 
 ```csharp
-var customBlock = new CodeBlockBuilder()
-    .AddLine("#region Properties")
-    .AddLine()
-    .AddLine("// Auto-generated properties")
-    .AddBuilder(propertyBuilder1)
-    .AddBuilder(propertyBuilder2)
-    .AddLine()
-    .AddLine("#endregion")
-    .Build();
-
-classBuilder.AddMember(customBlock);
+// Add raw code blocks to a class
+classBuilder.AddCodeBlock(@"
+    #region Properties
+    
+    // Auto-generated properties
+    // Properties would be added separately using AddProperty
+    
+    #endregion");
 ```
 
 ### Conditional Compilation
 
 ```csharp
-var debugCode = new CodeBlockBuilder()
-    .AddLine("#if DEBUG")
-    .AddLine("private readonly ILogger _logger;")
-    .AddLine("#endif")
-    .Build();
-
-classBuilder.AddMember(debugCode);
+classBuilder.AddCodeBlock(@"
+    #if DEBUG
+    private readonly ILogger _logger;
+    #endif");
 ```
 
 ### Nested Types
@@ -349,10 +330,12 @@ classBuilder.AddMember(debugCode);
 ```csharp
 var outerClass = new ClassBuilder("Container")
     .MakePublic()
-    .AddNestedType(new ClassBuilder("Nested")
+    .AddNestedClass(nested => nested
+        .WithName("Nested")
         .MakePrivate()
         .AddProperty("Value", "string"))
-    .AddNestedType(new EnumBuilder("NestedEnum")
+    .AddNestedEnum(nested => nested
+        .WithName("NestedEnum")
         .MakePublic()
         .AddValue("Option1", "1")
         .AddValue("Option2", "2"));
@@ -375,11 +358,9 @@ var genericClass = new ClassBuilder("Repository")
 ### File-Scoped Namespaces
 
 ```csharp
-var code = new CodeBuilder()
-    .AddLine("namespace MyApp.Models;")
-    .AddLine()
-    .AddBuilder(classBuilder)
-    .Build();
+// File-scoped namespaces need to be built manually
+var classCode = classBuilder.Build();
+var code = $"namespace MyApp.Models;\n\n{classCode}";
 ```
 
 ## Best Practices

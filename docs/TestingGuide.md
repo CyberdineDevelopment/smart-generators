@@ -84,15 +84,19 @@ public class MyGeneratorTests
             }";
         
         // Act
-        var result = SourceGeneratorTestHelper.RunGenerator<MyGenerator>(source);
+        var generator = new MyGenerator();
+        var output = SourceGeneratorTestHelper.RunGenerator(
+            generator,
+            new[] { source },
+            out var diagnostics);
         
         // Assert
-        result.Diagnostics.ShouldBeEmpty();
-        result.GeneratedSources.Length.ShouldBe(1);
+        diagnostics.ShouldBeEmpty();
+        output.Count.ShouldBe(1);
         
-        var generatedCode = result.GeneratedSources[0];
-        generatedCode.HintName.ShouldBe("Person.Builder.g.cs");
-        generatedCode.SourceText.ShouldContain("public class PersonBuilder");
+        var generatedCode = output.First();
+        generatedCode.Key.ShouldBe("Person.Builder.g.cs");
+        generatedCode.Value.ShouldContain("public class PersonBuilder");
     }
 }
 ```
@@ -107,10 +111,14 @@ public void GeneratedBuilderHasCorrectStructure()
     var source = TestSources.PersonClass;
     
     // Act
-    var result = SourceGeneratorTestHelper.RunGenerator<BuilderGenerator>(source);
+    var generator = new BuilderGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source },
+        out var diagnostics);
     
     // Assert
-    ExpectationsFactory.ExpectCode(result.GeneratedSources[0])
+    ExpectationsFactory.ExpectCode(output.Values.First())
         .HasNamespace("TestNamespace", ns => ns
             .HasClass("PersonBuilder", cls => cls
                 .HasModifier("public")
@@ -151,13 +159,17 @@ public void HandlesMultipleClassesInSameCompilation()
     };
     
     // Act
-    var result = SourceGeneratorTestHelper.RunGenerator<BuilderGenerator>(sources);
+    var generator = new BuilderGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        sources,
+        out var diagnostics);
     
     // Assert
-    result.GeneratedSources.Length.ShouldBe(3);
-    result.GeneratedSources.ShouldContain(s => s.HintName == "Customer.Builder.g.cs");
-    result.GeneratedSources.ShouldContain(s => s.HintName == "Order.Builder.g.cs");
-    result.GeneratedSources.ShouldContain(s => s.HintName == "Product.Builder.g.cs");
+    output.Count.ShouldBe(3);
+    output.Keys.ShouldContain("Customer.Builder.g.cs");
+    output.Keys.ShouldContain("Order.Builder.g.cs");
+    output.Keys.ShouldContain("Product.Builder.g.cs");
 }
 ```
 
@@ -176,11 +188,15 @@ public void ReportsDiagnosticForInvalidClass()
         }";
     
     // Act
-    var result = SourceGeneratorTestHelper.RunGenerator<BuilderGenerator>(source);
+    var generator = new BuilderGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source },
+        out var diagnostics);
     
     // Assert
-    result.Diagnostics.Length.ShouldBe(1);
-    var diagnostic = result.Diagnostics[0];
+    diagnostics.Length.ShouldBe(1);
+    var diagnostic = diagnostics[0];
     diagnostic.Id.ShouldBe("BG001");
     diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
     diagnostic.GetMessage().ShouldContain("cannot be static");
@@ -277,16 +293,21 @@ public void OnlyRegeneratesWhenInputChanges()
     var source2 = "[Generate] public class Class2 { }";
     
     // First run
-    var result1 = SourceGeneratorTestHelper.RunGenerator<MyIncrementalGenerator>(source1);
-    result1.GeneratedSources.Length.ShouldBe(1);
+    var generator = new MyIncrementalGenerator();
+    var output1 = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source1 },
+        out var diagnostics1);
+    output1.Count.ShouldBe(1);
     
     // Add new source
-    var result2 = SourceGeneratorTestHelper.RunGenerator<MyIncrementalGenerator>(
-        new[] { source1, source2 });
-    result2.GeneratedSources.Length.ShouldBe(2);
+    var output2 = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source1, source2 },
+        out var diagnostics2);
+    output2.Count.ShouldBe(2);
     
-    // Verify first source wasn't regenerated (same content)
-    result2.GeneratedSources[0].SourceText.ShouldBe(result1.GeneratedSources[0].SourceText);
+    // Note: Cannot verify incremental behavior with current test helper API
 }
 ```
 
@@ -306,7 +327,7 @@ public void MultipleGeneratorsWorkTogether()
             public string Name { get; set; }
         }";
     
-    var generators = new ISourceGenerator[]
+    var generators = new IIncrementalGenerator[]
     {
         new BuilderGenerator(),
         new DtoGenerator()
@@ -332,17 +353,17 @@ public void GeneratedCodeCompiles()
     var source = TestSources.PersonClass;
     
     // Act
-    var result = SourceGeneratorTestHelper.RunGenerator<BuilderGenerator>(source);
-    var compilation = CompilationVerifier.CreateCompilation(
-        result.GeneratedSources.Select(s => s.SourceText.ToString()).ToArray());
+    var generator = new BuilderGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source },
+        out var diagnostics);
     
     // Assert
-    var verifier = new CompilationVerifier(compilation);
-    verifier.ShouldCompileWithoutErrors();
-    verifier.ShouldNotHaveWarnings();
+    var verifier = new CompilationVerifier();
+    var assembly = verifier.CompileAndVerify(output.Values.ToArray());
     
     // Verify we can instantiate the generated type
-    var assembly = verifier.CompileToAssembly();
     var builderType = assembly.GetType("TestNamespace.PersonBuilder");
     builderType.ShouldNotBeNull();
     
@@ -362,10 +383,14 @@ public void GeneratedCodeMatchesSnapshot()
     var expectedPath = Path.Combine("Snapshots", "Expected", "Customer.Builder.g.cs");
     
     // Act
-    var result = SourceGeneratorTestHelper.RunGenerator<BuilderGenerator>(source);
+    var generator = new BuilderGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source },
+        out var diagnostics);
     
     // Assert
-    var generated = result.GeneratedSources[0].SourceText.ToString();
+    var generated = output.Values.First();
     var expected = File.ReadAllText(expectedPath);
     
     generated.ShouldBe(expected);
@@ -397,8 +422,12 @@ public void BuilderGeneratorHandlesGenericTypes() { }
 public void HandlesInvalidClassNames(string className)
 {
     var source = $"[GenerateBuilder] public class {className} {{ }}";
-    var result = SourceGeneratorTestHelper.RunGenerator<BuilderGenerator>(source);
-    result.Diagnostics.ShouldContain(d => d.Severity == DiagnosticSeverity.Error);
+    var generator = new BuilderGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source },
+        out var diagnostics);
+    diagnostics.ShouldContain(d => d.Severity == DiagnosticSeverity.Error);
 }
 ```
 
@@ -448,10 +477,14 @@ public void AllGeneratedCodeCompiles()
     
     foreach (var source in sources)
     {
-        var result = SourceGeneratorTestHelper.RunGenerator<MyGenerator>(source);
-        var verifier = new CompilationVerifier(CreateCompilation(result));
+        var generator = new MyGenerator();
+        var output = SourceGeneratorTestHelper.RunGenerator(
+            generator,
+            new[] { source },
+            out var diagnostics);
         
-        verifier.ShouldCompileWithoutErrors();
+        var verifier = new CompilationVerifier();
+        var assembly = verifier.CompileAndVerify(output.Values.ToArray());
     }
 }
 ```
@@ -463,10 +496,14 @@ public void AllGeneratedCodeCompiles()
 [MemberData(nameof(GetTestCases))]
 public void GeneratesCorrectCodeForAllTestCases(string source, string expectedHintName)
 {
-    var result = SourceGeneratorTestHelper.RunGenerator<MyGenerator>(source);
+    var generator = new MyGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { source },
+        out var diagnostics);
     
-    result.GeneratedSources.Length.ShouldBe(1);
-    result.GeneratedSources[0].HintName.ShouldBe(expectedHintName);
+    output.Count.ShouldBe(1);
+    output.Keys.First().ShouldBe(expectedHintName);
 }
 
 public static IEnumerable<object[]> GetTestCases()
@@ -482,14 +519,14 @@ public static IEnumerable<object[]> GetTestCases()
 
 ```csharp
 // Basic assertions
-result.GeneratedSources.ShouldNotBeEmpty();
-result.Diagnostics.ShouldBeEmpty();
+output.ShouldNotBeEmpty();
+diagnostics.ShouldBeEmpty();
 generatedCode.ShouldContain("public class");
 generatedCode.ShouldNotContain("error");
 
 // Collection assertions
-result.GeneratedSources.ShouldAllBe(s => s.SourceText.Length > 0);
-result.Diagnostics.ShouldContain(d => d.Id == "GEN001");
+output.Values.ShouldAllBe(s => s.Length > 0);
+diagnostics.ShouldContain(d => d.Id == "GEN001");
 ```
 
 ### Custom Assertions
@@ -497,14 +534,14 @@ result.Diagnostics.ShouldContain(d => d.Id == "GEN001");
 ```csharp
 public static class GeneratorAssertions
 {
-    public static void ShouldGenerateValidBuilder(this GeneratorRunResult result, string className)
+    public static void ShouldGenerateValidBuilder(this Dictionary<string, string> output, string className)
     {
-        result.GeneratedSources.Length.ShouldBe(1);
+        output.Count.ShouldBe(1);
         
-        var source = result.GeneratedSources[0];
-        source.HintName.ShouldBe($"{className}.Builder.g.cs");
+        var source = output.First();
+        source.Key.ShouldBe($"{className}.Builder.g.cs");
         
-        ExpectationsFactory.ExpectCode(source)
+        ExpectationsFactory.ExpectCode(source.Value)
             .HasClass($"{className}Builder", cls => cls
                 .HasMethod("Build", m => m.HasReturnType(className)))
             .Assert();

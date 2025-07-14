@@ -37,7 +37,7 @@ sequenceDiagram
     alt Assembly Scanner Enabled
         AssemblyScannerService->>IAssemblyScanner: Create instance
         AssemblyScannerService->>Generator: Return scanner
-        Generator->>IAssemblyScanner: GetAllNamedTypes()
+        Generator->>IAssemblyScanner: Access AllNamedTypes property
         IAssemblyScanner->>Compilation: Scan all assemblies
         IAssemblyScanner->>Generator: Return types
         Generator->>User: Generate code
@@ -102,7 +102,7 @@ public class CrossAssemblyGenerator : IncrementalGeneratorBase<TypeInfo>
         }
         
         // Use scanner for cross-assembly discovery
-        var allTypes = scanner.GetAllNamedTypes();
+        var allTypes = scanner.AllNamedTypes;
         var targetTypes = allTypes
             .Where(t => t.GetAttributes()
                 .Any(a => a.AttributeClass?.Name == "ProcessAttribute"));
@@ -125,7 +125,7 @@ public IEnumerable<INamedTypeSymbol> FindTypesWithAttribute(
     IAssemblyScanner scanner, 
     string attributeName)
 {
-    return scanner.GetAllNamedTypes()
+    return scanner.AllNamedTypes
         .Where(type => type.GetAttributes()
             .Any(attr => attr.AttributeClass?.Name == attributeName));
 }
@@ -138,7 +138,7 @@ public IEnumerable<INamedTypeSymbol> FindImplementations(
     IAssemblyScanner scanner,
     INamedTypeSymbol interfaceSymbol)
 {
-    return scanner.GetAllNamedTypes()
+    return scanner.AllNamedTypes
         .Where(type => !type.IsAbstract && 
                       type.AllInterfaces.Contains(interfaceSymbol));
 }
@@ -205,7 +205,7 @@ public void ScannerFindsTypesAcrossAssemblies()
     
     // Act
     var scanner = AssemblyScannerService.Get(mainCompilation);
-    var types = scanner?.GetAllNamedTypes()
+    var types = scanner?.AllNamedTypes
         .Where(t => t.GetAttributes()
             .Any(a => a.AttributeClass?.Name == "MyAttribute"))
         .ToList();
@@ -248,16 +248,17 @@ public void GeneratorUsesAssemblyScannerWhenEnabled()
     var referencedAssembly = referencedCompilation.ToMetadataReference();
     
     // Act
-    var result = SourceGeneratorTestHelper.RunGenerator<MyGenerator>(
-        mainSource,
-        additionalReferences: new[] { referencedAssembly });
+    var generator = new MyGenerator();
+    var output = SourceGeneratorTestHelper.RunGenerator(
+        generator,
+        new[] { mainSource },
+        out var diagnostics,
+        referencedAssembly);
     
     // Assert
-    result.GeneratedSources.Length.ShouldBe(2);
-    result.GeneratedSources.ShouldContain(s => 
-        s.HintName.Contains("ReferencedClass"));
-    result.GeneratedSources.ShouldContain(s => 
-        s.HintName.Contains("MainClass"));
+    output.Count.ShouldBe(2);
+    output.Keys.ShouldContain(k => k.Contains("ReferencedClass"));
+    output.Keys.ShouldContain(k => k.Contains("MainClass"));
 }
 ```
 
@@ -307,7 +308,7 @@ public class EnhancedEnumGenerator : IncrementalGeneratorBase<EnumTypeInfo>
             
             if (scanner != null)
             {
-                var enhancedEnums = scanner.GetAllNamedTypes()
+                var enhancedEnums = scanner.AllNamedTypes
                     .Where(t => t.TypeKind == TypeKind.Enum)
                     .Where(t => t.GetAttributes()
                         .Any(a => a.AttributeClass?.Name == "EnhancedEnumAttribute"));
@@ -354,7 +355,7 @@ public class ServiceRegistrationGenerator : IIncrementalGenerator
             if (scanner == null) return;
             
             // Find all services across assemblies
-            var services = scanner.GetAllNamedTypes()
+            var services = scanner.AllNamedTypes
                 .SelectMany(type => type.GetAttributes()
                     .Where(a => a.AttributeClass?.Name == "ServiceAttribute")
                     .Select(a => new { Type = type, Attribute = a }))
@@ -396,7 +397,7 @@ public class PluginDiscoveryGenerator : IncrementalGeneratorBase<PluginInfo>
         var pluginInterface = compilation.GetTypeByMetadataName("IPlugin");
         if (pluginInterface == null) return;
         
-        var plugins = scanner.GetAllNamedTypes()
+        var plugins = scanner.AllNamedTypes
             .Where(t => !t.IsAbstract)
             .Where(t => t.AllInterfaces.Contains(pluginInterface))
             .ToList();
