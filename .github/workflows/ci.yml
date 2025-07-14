@@ -21,8 +21,9 @@ on:
       - develop
 
 env:
-  DOTNET_VERSION: '10.x'
+  DOTNET_VERSION: '10.0'
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  DOTNET_INSTALL_DIR: ${{ github.workspace }}/.dotnet
 
 jobs:
   validate:
@@ -47,11 +48,18 @@ jobs:
         with:
           fetch-depth: 0
           
+      - name: Cache .NET SDK
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DOTNET_INSTALL_DIR }}
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-dotnet-
+            
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-          dotnet-quality: 'preview'
+          global-json-file: global.json
           
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -66,8 +74,20 @@ jobs:
         with:
           setAllVars: true
           
+      - name: Cache .NET tools
+        uses: actions/cache@v4
+        with:
+          path: ~/.dotnet/tools
+          key: ${{ runner.os }}-dotnet-tools-reportgenerator
+          restore-keys: |
+            ${{ runner.os }}-dotnet-tools-
+            
       - name: Install ReportGenerator
-        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+        run: |
+          $tools = dotnet tool list -g
+          if ($tools -notmatch "dotnet-reportgenerator-globaltool") {
+            dotnet tool install -g dotnet-reportgenerator-globaltool
+          }
         
       - name: Restore packages
         run: dotnet restore
@@ -83,7 +103,7 @@ jobs:
       - name: Generate coverage report
         if: always()
         run: |
-          reportgenerator -reports:${{ runner.temp }}/**/coverage.cobertura.xml -targetdir:${{ runner.temp }}/CodeCoverage -reporttypes:"Cobertura;HtmlInline_AzurePipelines;Badges"
+          reportgenerator -reports:${{ runner.temp }}/**/coverage.cobertura.xml -targetdir:${{ runner.temp }}/CodeCoverage -reporttypes:"Cobertura;Html;Badges"
         continue-on-error: true
         
       - name: Upload test results
@@ -120,18 +140,25 @@ jobs:
       contents: read
       security-events: write
     env:
-      BUILD_CONFIGURATION: Release
+      BUILD_CONFIGURATION: ${{ github.ref == 'refs/heads/master' && 'Release' || github.ref == 'refs/heads/develop' && 'Alpha' || startsWith(github.ref, 'refs/heads/beta/') && 'Beta' || startsWith(github.ref, 'refs/heads/release/') && 'Preview' || 'Alpha' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           
+      - name: Cache .NET SDK
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.DOTNET_INSTALL_DIR }}
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-dotnet-
+            
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-          dotnet-quality: 'preview'
+          global-json-file: global.json
           
       - name: Cache NuGet packages
         uses: actions/cache@v4
@@ -176,20 +203,21 @@ jobs:
           name: packages
           path: ${{ github.workspace }}/packages
           
-      # For GitHub Packages
+      - name: List package contents
+        run: |
+          Get-ChildItem -Path "${{ github.workspace }}/packages" -Recurse
+          
+      # For GitHub Packages - only for nightly/experimental branches
       - name: Push to GitHub Packages
-        if: github.event_name == 'push'
+        if: |
+          github.event_name == 'push' &&
+          (github.ref == 'refs/heads/develop' ||
+           startsWith(github.ref, 'refs/heads/experimental/') ||
+           startsWith(github.ref, 'refs/heads/feature/'))
         run: |
-          dotnet nuget push "${{ github.workspace }}/packages/*.nupkg" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
-        continue-on-error: true
-        
-      # For Azure Artifacts - requires secret AZURE_DEVOPS_PAT
-      - name: Push to Azure Artifacts
-        if: github.event_name == 'push' && env.AZURE_DEVOPS_PAT != ''
-        env:
-          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
-        run: |
-          dotnet nuget push "${{ github.workspace }}/packages/*.nupkg" --source "https://pkgs.dev.azure.com/REC-DevOps/_packaging/dotnet-packages/nuget/v3/index.json" --api-key ${{ secrets.AZURE_DEVOPS_PAT }} --skip-duplicate
+          Get-ChildItem -Path "${{ github.workspace }}/packages" -Filter "*.nupkg" -Recurse | ForEach-Object {
+            dotnet nuget push $_.FullName --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+          }
         continue-on-error: true
         
       # For NuGet.org - publish stable and prerelease versions
@@ -204,14 +232,16 @@ jobs:
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
         run: |
-          dotnet nuget push "${{ github.workspace }}/packages/*.nupkg" --source "https://api.nuget.org/v3/index.json" --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+          Get-ChildItem -Path "${{ github.workspace }}/packages" -Filter "*.nupkg" -Recurse | ForEach-Object {
+            dotnet nuget push $_.FullName --source "https://api.nuget.org/v3/index.json" --api-key ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+          }
         continue-on-error: true
         
       - name: Tag release
         if: github.ref == 'refs/heads/master'
         run: |
-          git config user.email "mike.blair@rayburnelectric.com"
-          git config user.name "Mike Blair"
+          git config user.email "cmblair@domesticateddata.com"
+          git config user.name "jConner"
           git tag -a "v${{ env.NBGV_SemVer2 }}" -m "Release v${{ env.NBGV_SemVer2 }}"
           git push origin "v${{ env.NBGV_SemVer2 }}"
         continue-on-error: true

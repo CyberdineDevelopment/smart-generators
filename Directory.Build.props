@@ -19,9 +19,10 @@
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://dev.azure.com/REC-DevOps/Analyzers-Generators/_git/smart-generators</RepositoryUrl>
+    <RepositoryUrl>https://github.com/CyberdineDevelopment/smart-generators</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     
     <!-- Symbol packages -->
     <IncludeSymbols>true</IncludeSymbols>
@@ -45,6 +46,8 @@
     <AnalysisLevel>none</AnalysisLevel>
     <RunAnalyzers>false</RunAnalyzers>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <!-- Treat analyzer warnings as warnings, not errors -->
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
   </PropertyGroup>
   
   <!-- Experimental: Minimal enforcement -->
@@ -58,6 +61,9 @@
     <AnalysisLevel>latest-minimum</AnalysisLevel>
     <RunAnalyzers>true</RunAnalyzers>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <!-- Treat analyzer warnings as warnings, not errors -->
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+    <ReportAnalyzer>true</ReportAnalyzer>
   </PropertyGroup>
   
   <!-- Alpha: Basic checks -->
@@ -71,6 +77,9 @@
     <AnalysisLevel>latest-minimum</AnalysisLevel>
     <RunAnalyzers>true</RunAnalyzers>
     <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <!-- Treat analyzer warnings as warnings, not errors -->
+    <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+    <ReportAnalyzer>true</ReportAnalyzer>
   </PropertyGroup>
   
   <!-- Beta: Recommended checks, warnings as errors -->
@@ -143,7 +152,12 @@
 
   <!-- Source Link -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+  </ItemGroup>
+
+  <!-- Include README in NuGet packages -->
+  <ItemGroup Condition="'$(IsPackable)' == 'true' And Exists('$(MSBuildThisFileDirectory)README.md')">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <!-- Analyzers - Applied to all projects -->
