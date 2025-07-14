@@ -1,5 +1,26 @@
 # FractalDataWorks Smart Generators
 
+Part of the FractalDataWorks toolkit.
+
+## Build Status
+
+[![Master Build](https://github.com/CyberdineDevelopment/smart-generators/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/CyberdineDevelopment/smart-generators/actions/workflows/ci.yml)
+[![Develop Build](https://github.com/CyberdineDevelopment/smart-generators/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/CyberdineDevelopment/smart-generators/actions/workflows/ci.yml)
+
+## Release Status
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/CyberdineDevelopment/smart-generators)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/CyberdineDevelopment/smart-generators?include_prereleases&label=pre-release)
+
+## Package Status
+
+![Nuget](https://img.shields.io/nuget/v/FractalDataWorks.SmartGenerators)
+![GitHub Packages](https://img.shields.io/badge/github%20packages-available-blue)
+
+## License
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 A comprehensive toolkit for building, testing, and deploying Roslyn source generators with a fluent code generation API.
 
 ## Overview
